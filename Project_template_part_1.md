@@ -1,8 +1,4 @@
-Это шаблон для решения **первой части** проектной работы. Структура этого файла повторяет структуру заданий. Заполняйте его по мере работы над решением.
-
 # Задание 1. Анализ и планирование
-
-Чтобы составить документ с описанием текущей архитектуры приложения, можно часть информации взять из описания компании условия задания. Это нормально.
 
 ### 1. Описание функциональности монолитного приложения
 
@@ -18,8 +14,6 @@
 
 ### 2. Анализ архитектуры монолитного приложения
 
-Перечислите здесь основные особенности текущего приложения: какой язык программирования используется, какая база данных, как организовано взаимодействие между компонентами и так далее.
-
 Язык программирования: Java
 База данных: PostgreSQL
 Архитектура: Монолитная, все компоненты системы (обработка запросов, бизнес-логика, работа с данными) находятся в рамках одного приложения.
@@ -29,35 +23,6 @@
 
 ### 3. Определение доменов и границы контекстов
 
-Архитектура монолитного решения (AS IS)
-
-```markdown
-@startuml Basic Sample
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
-
-Header Архитектура существующей системы
-Title Система "Теплый дом" (As Is)
-
-skinparam BackgroundColor SeaShell
-
-Person(user, "User")
-System_Boundary(c1, "Система Теплый дом") {
-    Container(web_app, "Web Application", "React, Java, PostgreSQL", "Система управления температурой с датчиков")
-}
-System_Ext(iot, "IoT")
-
-Rel(user, web_app, "Uses", "HTTPS")
-Rel(web_app, iot, "Передача температуры на устройство", "HTTPS")
-Rel(iot, web_app, "Получение температуры с устройства", "HTTPS")
-
-footer Рябчиков Владимир, 2024
-
-@enduml
-```
-Опишите здесь домены, которые вы выделили.
-
-Архитектура MSA решения (To Be)
-
 В монолитном приложении можно выделить 2 основных домена:
 1. Управление устройствами
 2. Мониторинг устройств
@@ -66,7 +31,11 @@ footer Рябчиков Владимир, 2024
 - Авторизации и аутентификации
 - Управления домами
 - Управления учетными данными пользователей
+- Управления сценариями устройств
 - Мониторинг / логирование
+- Приложение и сервер для потокового видео-стрима
+- Приложение для администратора системы (support)
+
 
 ### **4. Проблемы монолитного решения**
 
@@ -74,9 +43,10 @@ footer Рябчиков Владимир, 2024
 - поддерживать и масштабировать ее будет все сложнее и сложнее;
 - разобраться в ней трудно — особенно если система переходила из поколения в поколение, логика забывалась, люди уходили и приходили, а комментариев и тестов нет);
 - возможно, множество ошибок, которые тяжело мониторить и устранять;
-- мало тестов — монолит не разобрать и не протестировать, поэтому обычно есть только UI-тесты, поддержка которых обычно занимает много времени;
-- дорого вносить изменения;
+- возможно, мало тестов — монолит не разобрать и не протестировать, поэтому обычно есть только UI-тесты, поддержка которых обычно занимает много времени;
+- возможно, дорого вносить изменения;
 - застревание на технологиях. Стоит учитывать, что компания планирует подключать видео-наблюдение, что, возможно,  потребует использование отличного от монолитного решения стека.
+- при деплое доработок требуется остановка всего приложения
 
 ### 5. Визуализация контекста системы — диаграмма С4
 
@@ -86,19 +56,23 @@ footer Рябчиков Владимир, 2024
 
 # Задание 2. Проектирование микросервисной архитектуры
 
-В этом задании вам нужно предоставить только диаграммы в модели C4. Мы не просим вас отдельно описывать получившиеся микросервисы и то, как вы определили взаимодействия между компонентами To-Be системы. Если вы правильно подготовите диаграммы C4, они и так это покажут.
-
 **Диаграмма контейнеров (Containers)**
 
-Добавьте диаграмму.
+```markdown
+[C4_L2_schema](www.plantuml.com/plantuml/png/bLVTJXj75BxVfvXQbMeaC0b2lOXKAU14ILfIETXHBgtnUh2tU7VDxXY2gahyDA4IgA2e5rMh_hHv0UFYrk77lCBPL-YJzCpPiQTiTeETYtZsp9dlVEVC-HdkXv87ikEsM76nkh9G3UscSBdr2Ro1VhGJxS8WEhx7xXRkeEW4Uj4U3AETUmn-ZuxXD3g00Pp347eCtXJWbu9bVUHuTgjJ5wmfPJkyDpyVyAr2mv7DJgqJYi3sFIayMR1zTxxTufwoF1VAUikfpHSNvqfAzFpfohpBGoa255MBU88xdWWARTIrhCU2rqN0u0JPlO814kh3URGNxKSxq6LmZJ_3M0G3LDd7zILAtZ7oPPVqBwD3g-B8bc3mXn7YyHpyYQjhk8WEyGISuS7B7CjNVBOiPcOnHEpVdHyOl2KZFLIzYeuOHU2ACDx15VJZJPOVCmzdB2jSTxms3xZBbhcztWZyZbSl-Yq_O6N1oqtHGjTAgEfxUHMdMPPxZZ-vcP6Grrt7G-cI-aLnUHi3v5QN5GuFjlFsNTnCU9Fcp0pxscBuRqmkloLgLTvkLqSMNeWQMsgtMMm91Qk2sxBmLQZMy3FynA2BO9TuzLUnEHLvIWpyHMhfyA4C17SDFYkJu3q3lo7A02wGxDyglhZk8tTqufXfMmDj-o_bOW-NPwWuVCymRplLnfOAMUa9UyIbUC6tbOKl6uxtCfUG9m-xOPLtP1Ert71EhTI1ByIstVBvUev2JHVTKn5WqJxbNHS_BsBIo5PzwgWCu1-Cq6lynHIPPPho5QNejwg4p2vkuadCvhqiZIJN1xLylJPY-s2PBMcs9J-KZK2KdwtWryUIDyBFSlLQcgUKSEIfMgcpd_DDFfcNoFG0TVQGww6w5wPSXMjAZ6CIuCSGh-y8DrJDTCcpYsnFY0rvGXKmbITD7q_7hj1oAbzqYQ0GQQToq_X4xh5QJiVEyMNChIus7JkR74Ni3CunQjz71uRUW54cNPB4N80k2-nnQWMzLEfad8YJyUcPusGG7ly__pcNUxpnWOH1Eg-9PrVL0AvwaxCr1WrdLXR1jDo531mxn0DFunMT3NoKYqwe6P-g8cKghhg_d6VXL3UTqF5leZqA-1htOkz_LGKFfvHPfdrb8vl-Q1hZH1qHeqkjEBsuekDKCu6qOpEhbIB5akvE2sxS7lwVqcqrQ3nwddL4H-JT3TKN-ThwoFy3GkZ3MNGqQjlGevw0G9JM_T7Dn-cxcv8JunBynXfxK7tuKkRZ97xYLt3lveuzcYr5xkAcjIfQUf2Q06C_eOW-hbHAPLGoEiaXbQew1jAJ9LlBG7rOEL5QkAJx7eKGkXZEBjFp_9h4tVYf4nqoLLTfiHicZH3iJKjeXF86cxT9gNGp6HUKDA8BnFXh2aivWZPmG4IlKe-PkjAVwGIJE9Y1mRR6qO-NP9d2YOeINAY-IUUZxs9IrEfxMNT7QCQLQM7qyUJ32jucPmxqimfOZyv1Pd4aRLB-co9VhPHBf59O-7IHBHMBMasxP3HJqj9ecLVGwiDo9QartZNF3xeIcWSFbfCcpKCZ7KplcXV0BM0qYpFGpBOPshVXONbaez6cdgAt86rCLElPQXl9Ofq0BJ4nK_YP0P3s80zzUrt8b8H9sB7f0FoeafVUerWKvdLxyudUdQHrM6k-BqMGzlSa8dVXB9u_qSuiMxYpi6XPzuLNxxYj_m00)
+```
 
 **Диаграмма компонентов (Components)**
 
-Добавьте диаграмму для каждого из выделенных микросервисов.
+```markdown
+[C4_L3_schema](www.plantuml.com/plantuml/png/SoWkIImgAStDuIf8JCvEJ4zLKCejrWqjJYrIKgZcKb3m20a9KD1LY0Q9n79nfIIM92Ob5WDL1UGNbnIb1WVwGDIbvUUaf1OfA87KARY1EH091OXUXU3aZDJSn5YWI2rNBHS8GSnKqDMrKuY6cnRBXM23vT2qEwJcfG1T2m00)
+```
 
 **Диаграмма кода (Code)**
 
-Добавьте одну диаграмму или несколько.
+```markdown
+[C4_L4_schema](www.plantuml.com/plantuml/png/hPJDJXin4CVlVeeHboOL88euHJsW9Af8XOhQm3borYPnyQvJhmDKBL80LJrG2OHwhTIF5w0890eKNc7y2dsIJhpfXgqYUkd9uz_C-3yUp-vYwhXr_LX3RQ6rlD1AewwCENk0ntZk1tuNB_nX1HxDpX4wmbE_XpT-K07yx0_nkt-F5tY9DtWAU3oBdsOPMv9SI0juHCdlA7aFp_7Ix_bzFy0Jm5jQRZ94pe7V9_kQo0y8Khk42VW3jggSbe1Vnf3If_0hMRTuvGye0yyeyNeAIgi6gh8yJJU0NuEFWD-2o2c5_lGV81HuHjcbcX6op5YweP8Ujpo6AeysEjRq4r4psbXeIjxiIgqPKucJTfr74jPIQHlvxWq3UDfSUGOzaxeIB3dNUo5VzMNgO9iCAET-xgBkVG52QkdaVH4TELbXXp7UJftbaOD8ypI5UhLcadNLeVAwL5S5ciwgfCDwneuteWsvtQTBmJYCpjWoLkHWqoW1aKaI6RbIETiAbOu9bL1KRZvV_b_Y_rOd-P5-U9tmA1HJWRMrHfriRJeg6Ii0_D786H1CU2mBWEPUwG9HQOkQh3Q7SLLZjEG9qRQohjiIt0rndHPYaPLaY1Pt6LfLyH3tUsA4eS13sLkMzqhPKs-lj5-E7zwPuVB4s9YxKXOx2jYvUs_glBD6wr47HBiLPLDGkViivCaQ7d9e5_gPrLiyF7E5cYUxyfaTTMYxKG--44dJMdtTg1USeU1yE1-_dPaf30pxwnOFoL_utDZTwE0j9eG39ZhOkZ5qoAJ_55xX2PuHk1x-WQPXVcv-WR55cOX-h7y3)
+```
 
 # Задание 3. Разработка ER-диаграммы
 
