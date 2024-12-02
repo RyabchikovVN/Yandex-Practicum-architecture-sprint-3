@@ -29,7 +29,8 @@
 
 ### 3. Определение доменов и границы контекстов
 
-AS IS
+Архитектура монолитного решения (AS IS)
+
 ```markdown
 @startuml Basic Sample
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
@@ -55,30 +56,32 @@ footer Рябчиков Владимир, 2024
 ```
 Опишите здесь домены, которые вы выделили.
 
+Архитектура MSA решения (To Be)
 
+В монолитном приложении можно выделить 2 основных домена:
+1. Управление устройствами
+2. Мониторинг устройств
+
+Дополнительно я выделил бы домены:
+3. Авторизации, аутентификации
+4. Управления домами
+5. Управления учетными данными пользователей
+6. Мониторинг / логирование
 
 ### **4. Проблемы монолитного решения**
 
-- …
-- …
-- …
-
-Если вы считаете, что текущее решение не вызывает проблем, аргументируйте свою позицию.
+- сложность системы будет расти;
+- поддерживать и масштабировать ее будет все сложнее и сложнее;
+- разобраться в ней трудно — особенно если система переходила из поколения в поколение, логика забывалась, люди уходили и приходили, а комментариев и тестов нет);
+- возможно, множество ошибок, которые тяжело мониторить и устранять;
+- мало тестов — монолит не разобрать и не протестировать, поэтому обычно есть только UI-тесты, поддержка которых обычно занимает много времени;
+- дорого вносить изменения;
+- застревание на технологиях. Стоит учитывать, что компания планирует подключать видео-наблюдение, что, возможно,  потребует использование отличного от монолитного решения стека.
 
 ### 5. Визуализация контекста системы — диаграмма С4
 
-Добавьте сюда диаграмму контекста в модели C4.
-
-Чтобы добавить ссылку в файл Readme.md, нужно использовать синтаксис Markdown. Это делают так:
-
 ```markdown
-[Текст ссылки](URL)
-```
-
-Замените `Текст ссылки` текстом, который хотите использовать для ссылки. Вместо `URL` вставьте адрес, на который должна вести ссылка. Например:
-
-```markdown
-[Посетите Яндекс](https://ya.ru/)
+[Context diagram С4 монолита](www.plantuml.com/plantuml/png/TLBTQXD15BwVfnZtAe4qqT8hhze6ePKAiKdnCansnsJfximoCsij8iGKAHAmuWluymGnT24sCNc5Cs_aEKrifCQzsTdlx7U-7sRNEc5SdYRiGQp298yaxpcNsSUrcX5drMxiUdadjzA4MZcfN3NKQIrBX2BEbdLH4dTgzPsj1a4dpuvggR1E6eJQTMI8M4bJpMW_Ev0YaeR39z_txs7Y1r30ZH_u2z-74VVlyF012dmFO8pdZ_G5Ft404mBnO-Q7h1MxH7BujWQH7C1tF2rWweV8W6kOmopWfJtB3ssPCNiQgqmOaV9z4PvsZSvLLDU9DhmfHRCd4tJNaCPgLQAe5HwSu2iei-OvXadR-qGGvhmKFiBPFUrDqcN-Xd5yxYeedSbEMsGPqb_83j_BiYGEXOkr2X0wbY9q5VvKl18Ltj3MTOriFZyA_XNp5x2Wkc0CKuH-uV2AhwOBA6YqQdH-MnqP8kGI9d23s1X3lVqJwybhLugrGvL3tS81EvR9ge2rNMp2af63LglHn9_edxlfaWrVRfKBqaAbqKP3ViZHBYMWE4k3TC8ay_lxQUtQ0ksVmnI9byl8KFn70GDlsZ_wUpzxgRMZQ_ZLNy6FTJ4SFcEb8xX6O8QrzYjy--7s3jkLAiBh-ni0)
 ```
 
 # Задание 2. Проектирование микросервисной архитектуры
